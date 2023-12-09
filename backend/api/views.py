@@ -1,21 +1,21 @@
 from django.http import JsonResponse
 import json
+from django.forms.models import model_to_dict
 
+from products.models import Product
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from products.serializers import ProductSerializer 
+
+@api_view(["POST"])
 def api_home(request,*args, **kwargs):
+    
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        print(serializer.data)
+        # data = serializer.data
+        # instance = serializer.save()
+        # print(instance)
+        return Response(serializer.data)
 
-    print(request.GET)
-    print(request.POST)
-
-    body = request.body
-    data = {}
-    try:
-        data = json.loads(body)
-    except:
-        pass
-    print(data.keys())
-    # data['headers'] = request.headers
-    print(request.headers)
-    # json.dumps(request.headers)
-    data['headers'] = dict(request.headers)
-    data['content_type'] = request.content_type
-    return JsonResponse(data)
+    return Response({"invalid":"not good data"},status=400)
